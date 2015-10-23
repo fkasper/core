@@ -92,14 +92,14 @@ func validateOptions(o Options) (Options, error) {
 
 func ParseCommandLine() (options Options, err error) {
 	flag.Var(&options.EtcdNodes, "etcd", "Etcd discovery service API endpoints")
-	flag.StringVar(&options.EtcdKey, "etcdKey", "vulcand", "Etcd key for storing configuration")
+	flag.StringVar(&options.EtcdKey, "etcdKey", "xcms", "Etcd key for storing configuration")
 	flag.StringVar(&options.EtcdCaFile, "etcdCaFile", "", "Path to CA file for etcd communication")
 	flag.StringVar(&options.EtcdCertFile, "etcdCertFile", "", "Path to cert file for etcd communication")
 	flag.StringVar(&options.EtcdKeyFile, "etcdKeyFile", "", "Path to key file for etcd communication")
 	flag.StringVar(&options.EtcdConsistency, "etcdConsistency", etcd.STRONG_CONSISTENCY, "Etcd consistency")
 	flag.StringVar(&options.PidPath, "pidPath", "", "Path to write PID file to")
 	flag.StringVar(&options.RegisterPath, "registerPath", "/", "Register the App with vulcand on this path")
-	flag.StringVar(&options.ApplicationId, "applicationId", "x201", "Vulcan App Group Identifier")
+	flag.StringVar(&options.ApplicationId, "applicationId", "sitrepApi", "Vulcan App Group Identifier")
 	flag.StringVar(&options.HostLimit, "host", "*", "Bind to following host only")
 
 	flag.IntVar(&options.Port, "port", 8111, "Port to listen on")

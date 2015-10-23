@@ -1,4 +1,6 @@
-FROM golang:1.4-onbuild
+#FROM phusion/baseimage
+#FROM golang:1.5-onbuild
 EXPOSE 8111
 RUN make install
+
 ENTRYPOINT ["/go/bin/xcms-core"]

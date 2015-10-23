@@ -208,7 +208,7 @@ func (s *Service) newEngine() error {
 	if err := reg.RegisterServer(entry); err != nil {
 		return err
 	}
-	
+
 	//host string, methods []string, path, upstream string, middlewares []middleware.Middleware
 	loc := vulcan.NewLocation(s.options.HostLimit, []string{}, s.options.RegisterPath, s.options.ApplicationId,
 		[]middleware.Middleware{})

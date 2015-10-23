@@ -6,7 +6,7 @@ import (
 	"net/http"
 	// "strconv"
 	// "time"
-
+  "html/template"
 	"github.com/mailgun/log"
 	"github.com/mailgun/scroll"
   "go.xpandmmi.com/xcms/core/engine"
@@ -23,20 +23,9 @@ func InitProxyController(ng engine.Engine, app *scroll.App) {
 	app.SetNotFoundHandler(c.handleError)
 
   app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/status"}, Methods: []string{"GET"}, HandlerWithBody: c.getStatus})
-  app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/sitename"}, Methods: []string{"GET"}, HandlerWithBody: c.getSiteName})
-  app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/settings/public"}, Methods: []string{"GET"}, HandlerWithBody: c.getSiteName})
-  app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/pages/{page}/meta"}, Methods: []string{"GET"}, HandlerWithBody: c.getSiteName})
-  app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/pages/{page}/comments"}, Methods: []string{"GET"}, HandlerWithBody: c.getSiteName})
-  app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/pages"}, Methods: []string{"GET"}, HandlerWithBody: c.getSiteName})
-  app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/settings/public"}, Methods: []string{"GET"}, HandlerWithBody: c.getSiteName})
-  app.AddHandler(scroll.Spec{Paths: []string{"/attachments/{date}/{attachment}"}, Methods: []string{"GET"}, HandlerWithBody: c.getSiteName})
+  app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/services/oauth2/token"}, Methods: []string{"POST"}, HandlerWithBody: c.signInUser})
+  app.AddHandler(scroll.Spec{Paths: []string{"/search"}, Methods: []string{"GET"}, RawHandler: c.search})
 
-}
-
-func (c *ProxyController) getSiteName(w http.ResponseWriter, r *http.Request, params map[string]string, body []byte) (interface{}, error) {
-	return scroll.Response{
-		"Hostname": r.Host,
-	}, nil
 }
 
 func (c *ProxyController) getStatus(w http.ResponseWriter, r *http.Request, params map[string]string, body []byte) (interface{}, error) {
@@ -45,10 +34,72 @@ func (c *ProxyController) getStatus(w http.ResponseWriter, r *http.Request, para
 	}, nil
 }
 
+func (c *ProxyController) search(w http.ResponseWriter, r *http.Request) {
+  w.Header().Add("Content-Type", "text/html; charset=utf-8")
+  tpl, err := template.ParseFiles("templates/searchResult.html")
+  if err != nil {
+    w.Write([]byte("An error occured"))
+  }
+  queryString := r.URL.Query().Get("q")
+  if queryString == "" {
+    w.Write([]byte("Query parameter missing. NYI"))
+  }
+  token := r.URL.Query().Get("token")
+  if token == "" {
+    token = "overview"
+  }
+  limit := r.URL.Query().Get("limit")
+  if limit == "" {
+    limit = "30"
+  }
+  searchResult, err := c.ng.Search(token, limit, queryString)
+  if err != nil {
+    w.Write([]byte(err.Error()))
+  }
+  if err := tpl.Execute(w, searchResult); err != nil {
+    w.Write([]byte("An error occured"))
+  }
+
+	// if err != nil {
+	// 	return nil, formatError(err)
+	// }
+	// return scroll.Response{
+	// 	"access_token": accessToken,
+	// 	"token_type": "bearer",
+	// }, nil
+}
+
+func (c *ProxyController) signInUser(w http.ResponseWriter, r *http.Request, params map[string]string, body []byte) (interface{}, error) {
+	grantType := r.PostFormValue("grant_type")
+	if grantType != "password" {
+		return nil, formatError(scroll.InvalidFormatError{
+			Field: "grant_type",
+			Value: "must be type password on this endpoint",
+		})
+	}
+	email := r.PostFormValue("email")
+	password := r.PostFormValue("password")
+	if email == "" || password == "" {
+		return nil, formatError(scroll.InvalidFormatError{
+			Field: "email,password",
+			Value: "you must supply username and password",
+		})
+	}
+	accessToken, err := c.ng.IssueAuthenticationToken(r.Host, email, password)
+	if err != nil {
+		return nil, formatError(err)
+	}
+	return scroll.Response{
+		"access_token": accessToken,
+		"token_type": "bearer",
+	}, nil
+}
+
 func (c *ProxyController) handleError(w http.ResponseWriter, r *http.Request) {
   log.Infof("not found")
 	scroll.ReplyError(w, scroll.NotFoundError{Description: "Object not found"})
 }
+
 
 
 func formatError(e error) error {

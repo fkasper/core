@@ -4,6 +4,7 @@ import (
 	//"time"
 
 	"github.com/mailgun/log"
+  elastigo "github.com/mattbaird/elastigo/lib"
 )
 
 type NewEngineFn func() (Engine, error)
@@ -20,6 +21,8 @@ type Engine interface {
 	// In  case if cancel channel is closed, the subscribe events should no longer be generated.
 	Subscribe(events chan interface{}, cancel chan bool) error
 
+	IssueAuthenticationToken(hostname string, email string, password string) (string, error)
+  Search( token string, limit string, query string ) (elastigo.Hits, error)
 	// GetLogSeverity returns the current logging severity level
 	GetLogSeverity() log.Severity
 	// SetLogSeverity updates the logging severity level
@@ -27,4 +30,11 @@ type Engine interface {
 
 	// Close should close all underlying resources such as connections, files, etc.
 	Close()
+}
+
+type SiteSetting struct {
+	Site 						string
+	MetaStorage  		map[string]*string
+	ClientStorage  	map[string]*string
+	PluginStorage 	map[string]map[string]*string
 }
