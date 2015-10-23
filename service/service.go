@@ -178,6 +178,19 @@ func (s *Service) startApi() error {
 	return s.apiServer.ListenAndServe()
 }
 
+func (s *Service) RegSrv(registry *vulcan.Registry) {
+    for {
+      entry, _ := vulcan.NewEndpointWithID(s.options.ApplicationId,
+        s.options.ApplicationId,
+        s.options.Interface,
+        s.options.Port)
+
+      if err := registry.RegisterBackend(entry); err != nil {
+        log.Errorf(err.Error())
+      }
+      time.Sleep(3000 * time.Millisecond)
+    }
+}
 func (s *Service) newEngine() error {
 	ng, err := etcdng.New(
 		s.options.EtcdNodes,
@@ -194,18 +207,13 @@ func (s *Service) newEngine() error {
 	s.ng = ng
 
 	config := vulcan.Config{
-		PublicAPIHost:    "http://127.0.0.1:8182",
-		ProtectedAPIHost: "http://127.0.0.1:8182",
+		PublicAPIHost:    "http://vulcand.dev.docker:8182",
+		ProtectedAPIHost: "http://vulcand.dev.docker:8182",
 	}
 	reg := vulcan.NewRegistry(config, s.options.EtcdNodes)
-	entry, _ := vulcan.NewEndpointWithID(s.options.ApplicationId, s.options.ApplicationId, s.options.Interface, s.options.Port)
-	if err := reg.RegisterBackend(entry); err != nil {
-		return err
-	}
 
-	if err := reg.RegisterServer(entry); err != nil {
-		return err
-	}
+  go s.RegSrv(reg)
+
 
 	//host string, methods []string, path, upstream string, middlewares []middleware.Middleware
 	loc := vulcan.NewLocation(s.options.HostLimit, []string{}, s.options.RegisterPath, s.options.ApplicationId,
