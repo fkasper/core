@@ -3,8 +3,8 @@ package engine
 import (
 	//"time"
 
-	"github.com/mailgun/log"
-  elastigo "github.com/mattbaird/elastigo/lib"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/mailgun/log"
+	elastigo "github.com/fkasper/core/Godeps/_workspace/src/github.com/mattbaird/elastigo/lib"
 )
 
 type NewEngineFn func() (Engine, error)
@@ -22,7 +22,7 @@ type Engine interface {
 	Subscribe(events chan interface{}, cancel chan bool) error
 
 	IssueAuthenticationToken(hostname string, email string, password string) (string, error)
-  Search( token string, limit string, query string ) (elastigo.Hits, error)
+	Search(token string, limit string, query string) (elastigo.Hits, error)
 	// GetLogSeverity returns the current logging severity level
 	GetLogSeverity() log.Severity
 	// SetLogSeverity updates the logging severity level
@@ -33,8 +33,8 @@ type Engine interface {
 }
 
 type SiteSetting struct {
-	Site 						string
-	MetaStorage  		map[string]*string
-	ClientStorage  	map[string]*string
-	PluginStorage 	map[string]map[string]*string
+	Site          string
+	MetaStorage   map[string]*string
+	ClientStorage map[string]*string
+	PluginStorage map[string]map[string]*string
 }

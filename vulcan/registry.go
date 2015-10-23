@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/coreos/go-etcd/etcd"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/coreos/go-etcd/etcd"
 )
 
 const (
@@ -23,7 +23,7 @@ type Registry struct {
 type Config struct {
 	PublicAPIHost    string
 	ProtectedAPIHost string
-	Hosts 					[]string
+	Hosts            []string
 }
 
 func NewRegistry(config Config, hosts []string) *Registry {

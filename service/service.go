@@ -8,19 +8,19 @@ import (
 	"net/http"
 	"os"
 	//"os/exec"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/coreos/go-etcd/etcd"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/mailgun/log"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/mailgun/scroll"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/rs/cors"
 	"os/signal"
 	"syscall"
 	"time"
-	"github.com/rs/cors"
-  "github.com/coreos/go-etcd/etcd"
-  "github.com/mailgun/log"
-  "github.com/mailgun/scroll"
 	//"github.com/mailgun/scroll/registry"
-  "github.com/mailgun/manners"
-  "github.com/mailgun/metrics"
-  "github.com/fkasper/core/api"
-  "github.com/fkasper/core/engine"
-  "github.com/fkasper/core/engine/etcdng"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/mailgun/manners"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/mailgun/metrics"
+	"github.com/fkasper/core/api"
+	"github.com/fkasper/core/engine"
+	"github.com/fkasper/core/engine/etcdng"
 	"github.com/fkasper/core/vulcan"
 	"github.com/fkasper/core/vulcan/middleware"
 )
@@ -53,8 +53,8 @@ type Service struct {
 
 func NewService(options Options) *Service {
 	return &Service{
-		options:  options,
-		errorC:   make(chan error),
+		options: options,
+		errorC:  make(chan error),
 		// Channel receiving signals has to be non blocking, otherwise the service can miss a signal.
 		sigC: make(chan os.Signal, 1024),
 	}
@@ -97,7 +97,7 @@ func (s *Service) Start() error {
 	// if err := s.supervisor.Start(); err != nil {
 	// 	return err
 	// }
-  if err := s.newEngine(); err != nil {
+	if err := s.newEngine(); err != nil {
 		return err
 	}
 
@@ -152,7 +152,6 @@ func (s *Service) reportSystemMetrics() {
 	}
 }
 
-
 func (s *Service) initApi() error {
 	s.apiApp = scroll.NewApp()
 	api.InitProxyController(s.ng, s.apiApp)
@@ -165,12 +164,11 @@ func (s *Service) startApi() error {
 
 	//go func() {
 
-
 	//}()
 
 	server := &http.Server{
 		Addr:           addr,
-		Handler:       	handler,
+		Handler:        handler,
 		ReadTimeout:    s.options.ServerReadTimeout,
 		WriteTimeout:   s.options.ServerWriteTimeout,
 		MaxHeaderBytes: 1 << 20,
@@ -195,12 +193,12 @@ func (s *Service) newEngine() error {
 	}
 	s.ng = ng
 
-	config := vulcan.Config {
-		PublicAPIHost: "http://127.0.0.1:8182",
+	config := vulcan.Config{
+		PublicAPIHost:    "http://127.0.0.1:8182",
 		ProtectedAPIHost: "http://127.0.0.1:8182",
 	}
 	reg := vulcan.NewRegistry(config, s.options.EtcdNodes)
-	entry, _ := vulcan.NewEndpointWithID(s.options.ApplicationId,s.options.ApplicationId, s.options.Interface, s.options.Port)
+	entry, _ := vulcan.NewEndpointWithID(s.options.ApplicationId, s.options.ApplicationId, s.options.Interface, s.options.Port)
 	if err := reg.RegisterBackend(entry); err != nil {
 		return err
 	}

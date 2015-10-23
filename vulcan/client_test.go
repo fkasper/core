@@ -3,10 +3,10 @@ package vulcan
 import (
 	"testing"
 
-	"github.com/coreos/go-etcd/etcd"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/coreos/go-etcd/etcd"
 	"github.com/fkasper/core/vulcan/middleware"
 
-	. "gopkg.in/check.v1"
+	. "github.com/fkasper/core/Godeps/_workspace/src/gopkg.in/check.v1"
 )
 
 func TestClient(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/fkasper/core/vulcan/middleware"
 
-	. "gopkg.in/check.v1"
+	. "github.com/fkasper/core/Godeps/_workspace/src/gopkg.in/check.v1"
 )
 
 func TestR(t *testing.T) { TestingT(t) }

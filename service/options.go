@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/coreos/go-etcd/etcd"
-	"github.com/mailgun/log"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/coreos/go-etcd/etcd"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/mailgun/log"
 )
 
 type Options struct {
@@ -22,9 +22,9 @@ type Options struct {
 	EtcdKeyFile     string
 	EtcdConsistency string
 
-	RegisterPath       string
-	ApplicationId			 string
-	HostLimit					 string
+	RegisterPath  string
+	ApplicationId string
+	HostLimit     string
 
 	Log         string
 	LogSeverity SeverityFlag

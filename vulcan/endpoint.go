@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mailgun/iptools"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/mailgun/iptools"
 )
 
 type Endpoint struct {
@@ -85,10 +85,10 @@ func makeEndpointURL(listenIP string, listenPort int) (string, error) {
 
 type backend struct {
 	Type string
-	Id string
+	Id   string
 }
 
 type server struct {
 	URL string
-	Id string
+	Id  string
 }

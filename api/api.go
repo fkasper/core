@@ -6,15 +6,15 @@ import (
 	"net/http"
 	// "strconv"
 	// "time"
-  "html/template"
-	"github.com/mailgun/log"
-	"github.com/mailgun/scroll"
-  "github.com/fkasper/core/engine"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/mailgun/log"
+	"github.com/fkasper/core/Godeps/_workspace/src/github.com/mailgun/scroll"
+	"github.com/fkasper/core/engine"
+	"html/template"
 )
 
 type ProxyController struct {
-	ng    engine.Engine
-	app   *scroll.App
+	ng  engine.Engine
+	app *scroll.App
 }
 
 func InitProxyController(ng engine.Engine, app *scroll.App) {
@@ -22,9 +22,9 @@ func InitProxyController(ng engine.Engine, app *scroll.App) {
 
 	app.SetNotFoundHandler(c.handleError)
 
-  app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/status"}, Methods: []string{"GET"}, HandlerWithBody: c.getStatus})
-  app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/services/oauth2/token"}, Methods: []string{"POST"}, HandlerWithBody: c.signInUser})
-  app.AddHandler(scroll.Spec{Paths: []string{"/search"}, Methods: []string{"GET"}, RawHandler: c.search})
+	app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/status"}, Methods: []string{"GET"}, HandlerWithBody: c.getStatus})
+	app.AddHandler(scroll.Spec{Paths: []string{"/api/v1/services/oauth2/token"}, Methods: []string{"POST"}, HandlerWithBody: c.signInUser})
+	app.AddHandler(scroll.Spec{Paths: []string{"/search"}, Methods: []string{"GET"}, RawHandler: c.search})
 
 }
 
@@ -35,30 +35,30 @@ func (c *ProxyController) getStatus(w http.ResponseWriter, r *http.Request, para
 }
 
 func (c *ProxyController) search(w http.ResponseWriter, r *http.Request) {
-  w.Header().Add("Content-Type", "text/html; charset=utf-8")
-  tpl, err := template.ParseFiles("templates/searchResult.html")
-  if err != nil {
-    w.Write([]byte("An error occured"))
-  }
-  queryString := r.URL.Query().Get("q")
-  if queryString == "" {
-    w.Write([]byte("Query parameter missing. NYI"))
-  }
-  token := r.URL.Query().Get("token")
-  if token == "" {
-    token = "overview"
-  }
-  limit := r.URL.Query().Get("limit")
-  if limit == "" {
-    limit = "30"
-  }
-  searchResult, err := c.ng.Search(token, limit, queryString)
-  if err != nil {
-    w.Write([]byte(err.Error()))
-  }
-  if err := tpl.Execute(w, searchResult); err != nil {
-    w.Write([]byte("An error occured"))
-  }
+	w.Header().Add("Content-Type", "text/html; charset=utf-8")
+	tpl, err := template.ParseFiles("templates/searchResult.html")
+	if err != nil {
+		w.Write([]byte("An error occured"))
+	}
+	queryString := r.URL.Query().Get("q")
+	if queryString == "" {
+		w.Write([]byte("Query parameter missing. NYI"))
+	}
+	token := r.URL.Query().Get("token")
+	if token == "" {
+		token = "overview"
+	}
+	limit := r.URL.Query().Get("limit")
+	if limit == "" {
+		limit = "30"
+	}
+	searchResult, err := c.ng.Search(token, limit, queryString)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+	if err := tpl.Execute(w, searchResult); err != nil {
+		w.Write([]byte("An error occured"))
+	}
 
 	// if err != nil {
 	// 	return nil, formatError(err)
@@ -91,16 +91,14 @@ func (c *ProxyController) signInUser(w http.ResponseWriter, r *http.Request, par
 	}
 	return scroll.Response{
 		"access_token": accessToken,
-		"token_type": "bearer",
+		"token_type":   "bearer",
 	}, nil
 }
 
 func (c *ProxyController) handleError(w http.ResponseWriter, r *http.Request) {
-  log.Infof("not found")
+	log.Infof("not found")
 	scroll.ReplyError(w, scroll.NotFoundError{Description: "Object not found"})
 }
-
-
 
 func formatError(e error) error {
 	switch err := e.(type) {
