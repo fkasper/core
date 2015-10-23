@@ -18,7 +18,7 @@ sloccount:
 	 find . -path ./Godeps -prune -o -name "*.go" -print0 | xargs -0 wc -l
 
 install: clean
-	go install github.com/fkasper/sitrep-utils
+	go install github.com/fkasper/core
 	#cd xctl && $(MAKE) install && cd ..
 	#cd vbundle && $(MAKE) install && cd ..
 

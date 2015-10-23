@@ -98,7 +98,7 @@ func ParseCommandLine() (options Options, err error) {
 	flag.StringVar(&options.EtcdKeyFile, "etcdKeyFile", "", "Path to key file for etcd communication")
 	flag.StringVar(&options.EtcdConsistency, "etcdConsistency", etcd.STRONG_CONSISTENCY, "Etcd consistency")
 	flag.StringVar(&options.PidPath, "pidPath", "", "Path to write PID file to")
-	flag.StringVar(&options.RegisterPath, "registerPath", "/", "Register the App with vulcand on this path")
+	flag.StringVar(&options.RegisterPath, "registerPath", "Path(\"/someunusedpathtonotscrewanything\")", "Register the App with vulcand on this path")
 	flag.StringVar(&options.ApplicationId, "applicationId", "sitrepApi", "Vulcan App Group Identifier")
 	flag.StringVar(&options.HostLimit, "host", "*", "Bind to following host only")
 
