@@ -178,19 +178,31 @@ func (s *Service) startApi() error {
 	return s.apiServer.ListenAndServe()
 }
 
-func (s *Service) RegSrv(registry *vulcan.Registry) {
+func (s *Service) regSrv(config vulcan.Config) {
     for {
-      entry, _ := vulcan.NewEndpointWithID(s.options.ApplicationId,
+      registry := vulcan.NewRegistry(config, s.options.EtcdNodes)
+      entry, err := vulcan.NewEndpointWithID(s.options.ApplicationId,
         s.options.ApplicationId,
         s.options.Interface,
         s.options.Port)
-
-      log.Debugf("Syncing up Vulcan")
+      if err != nil {
+        log.Errorf(err.Error())
+      }
+      log.Debugf(entry.String())
 
       if err := registry.RegisterBackend(entry); err != nil {
         log.Errorf(err.Error())
       }
-      time.Sleep(2000 * time.Millisecond)
+      loc := vulcan.NewLocation(s.options.HostLimit,
+        []string{},
+        s.options.RegisterPath,
+        s.options.ApplicationId,
+        []middleware.Middleware{})
+      if err := registry.RegisterFrontend(loc); err != nil {
+        log.Errorf(err.Error())
+      }
+      log.Debugf("Syncing up Vulcan")
+      time.Sleep(4000 * time.Millisecond)
     }
 }
 func (s *Service) newEngine() error {
@@ -212,16 +224,11 @@ func (s *Service) newEngine() error {
 		PublicAPIHost:    "http://vulcand.dev.docker:8182",
 		ProtectedAPIHost: "http://vulcand.dev.docker:8182",
 	}
-	reg := vulcan.NewRegistry(config, s.options.EtcdNodes)
 
-  go s.RegSrv(reg)
+  go s.regSrv(config)
 
 	//host string, methods []string, path, upstream string, middlewares []middleware.Middleware
-	loc := vulcan.NewLocation(s.options.HostLimit, []string{}, s.options.RegisterPath, s.options.ApplicationId,
-		[]middleware.Middleware{})
-	if err := reg.RegisterFrontend(loc); err != nil {
-		return err
-	}
+
 
 	return err
 }
