@@ -185,10 +185,12 @@ func (s *Service) RegSrv(registry *vulcan.Registry) {
         s.options.Interface,
         s.options.Port)
 
+      log.Debugf("Syncing up Vulcan")
+
       if err := registry.RegisterBackend(entry); err != nil {
         log.Errorf(err.Error())
       }
-      time.Sleep(3000 * time.Millisecond)
+      time.Sleep(2000 * time.Millisecond)
     }
 }
 func (s *Service) newEngine() error {
@@ -213,7 +215,6 @@ func (s *Service) newEngine() error {
 	reg := vulcan.NewRegistry(config, s.options.EtcdNodes)
 
   go s.RegSrv(reg)
-
 
 	//host string, methods []string, path, upstream string, middlewares []middleware.Middleware
 	loc := vulcan.NewLocation(s.options.HostLimit, []string{}, s.options.RegisterPath, s.options.ApplicationId,
