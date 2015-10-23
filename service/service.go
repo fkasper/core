@@ -193,6 +193,9 @@ func (s *Service) regSrv(config vulcan.Config) {
       if err := registry.RegisterBackend(entry); err != nil {
         log.Errorf(err.Error())
       }
+      if err := reg.RegisterServer(entry); err != nil {
+        log.Errorf(err.Error())
+      }
       loc := vulcan.NewLocation(s.options.HostLimit,
         []string{},
         s.options.RegisterPath,
