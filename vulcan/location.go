@@ -36,11 +36,11 @@ func NewLocation(host string, methods []string, path, upstream string, middlewar
 	path = convertPath(path)
 
 	return &Location{
-		ID:       makeLocationID(methods, path),
+		ID:       makeLocationID(path),
 		Host:     host,
 		Methods:  methods,
 		URLPath:  path,
-		Path:     makeLocationPath(methods, path),
+		Path:     makeLocationPath(path),
 		Upstream: upstream,
 		Options: LocationOptions{
 			FailoverPredicate: defaultFailoverPredicate,
@@ -69,21 +69,15 @@ func (l *Location) String() string {
 }
 
 func (l *Location) Route() string {
-	var methodExpr string
-	if len(l.Methods) == 1 {
-		methodExpr = fmt.Sprintf(`Method("%s")`, l.Methods[0])
-	} else {
-		methodExpr = fmt.Sprintf(`MethodRegexp("%s")`, strings.Join(l.Methods, "|"))
-	}
-	return fmt.Sprintf(`Host("%s") && %s && Path("%s")`, l.Host, methodExpr, l.URLPath)
+	return fmt.Sprintf(`%s`, l.URLPath)
 }
 
-func makeLocationID(methods []string, path string) string {
-	return strings.ToLower(strings.Replace(fmt.Sprintf("%v%v", strings.Join(methods, "."), path), "/", ".", -1))
+func makeLocationID(path string) string {
+	return strings.ToLower(strings.Replace(path, "/", ".", -1))
 }
 
-func makeLocationPath(methods []string, path string) string {
-	return fmt.Sprintf(`TrieRoute("%v", "%v")`, strings.Join(methods, `", "`), path)
+func makeLocationPath(path string) string {
+	return fmt.Sprintf(`Path("%v")`, path)
 }
 
 // Convert router path to the format understood by vulcand.
