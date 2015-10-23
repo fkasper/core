@@ -9,7 +9,7 @@ import (
   "html/template"
 	"github.com/mailgun/log"
 	"github.com/mailgun/scroll"
-  "go.xpandmmi.com/xcms/core/engine"
+  "github.com/fkasper/core/engine"
 )
 
 type ProxyController struct {

@@ -10,7 +10,7 @@ import (
   "github.com/mattes/migrate/migrate"
   "github.com/mailgun/go-etcd/etcd"
   "github.com/mailgun/log"
-  "go.xpandmmi.com/xcms/core/engine"
+  "github.com/fkasper/core/engine"
   "github.com/dgrijalva/jwt-go"
   "golang.org/x/crypto/bcrypt"
   "math/rand"

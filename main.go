@@ -5,7 +5,7 @@ import (
 	"os"
 	"runtime"
 
-	"go.xpandmmi.com/xcms/core/service"
+	"github.com/fkasper/core/service"
 )
 
 func main() {

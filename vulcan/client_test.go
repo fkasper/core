@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/coreos/go-etcd/etcd"
-	"go.xpandmmi.com/xcms/core/vulcan/middleware"
+	"github.com/fkasper/core/vulcan/middleware"
 
 	. "gopkg.in/check.v1"
 )

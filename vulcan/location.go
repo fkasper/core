@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"go.xpandmmi.com/xcms/core/vulcan/middleware"
+	"github.com/fkasper/core/vulcan/middleware"
 )
 
 const (

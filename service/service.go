@@ -18,11 +18,11 @@ import (
 	//"github.com/mailgun/scroll/registry"
   "github.com/mailgun/manners"
   "github.com/mailgun/metrics"
-  "go.xpandmmi.com/xcms/core/api"
-  "go.xpandmmi.com/xcms/core/engine"
-  "go.xpandmmi.com/xcms/core/engine/etcdng"
-	"go.xpandmmi.com/xcms/core/vulcan"
-	"go.xpandmmi.com/xcms/core/vulcan/middleware"
+  "github.com/fkasper/core/api"
+  "github.com/fkasper/core/engine"
+  "github.com/fkasper/core/engine/etcdng"
+	"github.com/fkasper/core/vulcan"
+	"github.com/fkasper/core/vulcan/middleware"
 )
 
 func Run() error {
