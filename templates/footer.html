@@ -1,0 +1,39 @@
+{{ define "footer" }}
+
+<div id="outer-footer" style="margin-top: 30px;">
+  <div id="footer">
+    <div class="line" style="padding:10px;">
+      <div class="left-icon" >
+        Providing Global Strategies for Secure Operations in a Rapidly Changing World™<hr />
+        For technical support or a full SITREP demo contact VATC exercise support.
+      </div>
+
+
+<form action="/contact" method="POST" >
+
+        <div class="middle-text"><small>Your Name*</small><br />
+          <input type="text" name="name" placeholder="Name" style="color: #393939!important"/><small>Your Email*</small><br />
+          <input type="text" name="email" placeholder="Email" style="color: #393939!important"/><small>A Subject*</small><br />
+          <input type="text" name="subject" placeholder="Subject" style="color: #393939!important"/>
+        </div>
+        <div class="middle-text"><small>Content*</small><br />
+          <textarea placeholder="Content" name="content" rows="4" style="color: #393939!important"></textarea>
+          <input type="submit" value="Send Contact Request"/>
+        </div>
+
+</form>
+
+      <div class="right-text">
+        <img src="//ga15.sitrep-vatcinc.com/assets/images/vatc-logo.png" style="max-height: 100%;max-width: 70%;margin: 10px 30px;"/>
+      </div>
+    </div>
+    <div class="line text-center" style="padding:10px;">
+      <a href="http://vatcinc.com" target="_blank" style="color: #fff;font-size:14px;">VISUAL AWARENESS TECHNOLOGIES AND CONSULTING, INC. © 2015 | ALL RIGHTS RESERVED</a>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>
+
+{{ end }}

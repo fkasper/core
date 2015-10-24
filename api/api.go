@@ -17,6 +17,9 @@ type ProxyController struct {
 	app *scroll.App
 }
 
+var templates = template.Must(template.ParseGlob("templates/**"))
+
+
 func InitProxyController(ng engine.Engine, app *scroll.App) {
 	c := &ProxyController{ng: ng, app: app}
 
@@ -36,24 +39,14 @@ func (c *ProxyController) getStatus(w http.ResponseWriter, r *http.Request, para
 }
 
 func renderForbidden(w http.ResponseWriter, r *http.Request, reason interface{}) {
-  tpl, err := template.ParseFiles("templates/forbidden.html")
-  if err != nil {
-    w.Write([]byte("An error occured"))
-    return
-  }
-  if err := tpl.Execute(w, reason); err != nil {
+  if err := templates.ExecuteTemplate(w, "forbidden", reason); err != nil {
     w.Write([]byte("An error occured"))
     return
   }
 }
 
 func renderTweetForm(w http.ResponseWriter, r *http.Request, reason interface{}) {
-  tpl, err := template.ParseFiles("templates/tweetForm.html")
-  if err != nil {
-    w.Write([]byte("An error occured"))
-    return
-  }
-  if err := tpl.Execute(w, reason); err != nil {
+  if err := templates.ExecuteTemplate(w, "tweetForm", reason); err != nil {
     w.Write([]byte("An error occured"))
     return
   }
@@ -73,17 +66,13 @@ func (c *ProxyController) tweetForm(w http.ResponseWriter, r *http.Request) {
   tweetContent := r.Form.Get("content")
   if tweetContent == "" {
     renderTweetForm(w,r,"No Post Data specified")
+    return
   }
   renderTweetForm(w,r,"OK")
 }
 
 func (c *ProxyController) search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/html; charset=utf-8")
-	tpl, err := template.ParseFiles("templates/searchResult.html")
-	if err != nil {
-		w.Write([]byte("An error occured"))
-    return
-	}
 	queryString := r.URL.Query().Get("q")
 	limit := r.URL.Query().Get("limit")
 	if limit == "" {
@@ -94,7 +83,7 @@ func (c *ProxyController) search(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
     return
 	}
-	if err := tpl.Execute(w, searchResult); err != nil {
+	if err := templates.ExecuteTemplate(w, "searchResult", searchResult); err != nil {
 		w.Write([]byte("An error occured"))
     return
 	}

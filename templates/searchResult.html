@@ -1,56 +1,5 @@
-<!doctype html>
-<!--[if lt IE 7]>  <html class="ie ie6 lte9 lte8 lte7"> <![endif]-->
-<!--[if IE 7]>     <html class="ie ie7 lte9 lte8 lte7"> <![endif]-->
-<!--[if IE 8]>     <html class="ie ie8 lte9 lte8"> <![endif]-->
-<!--[if IE 9]>     <html class="ie ie9 lte9"> <![endif]-->
-<!--[if gt IE 9]>  <html class="ie"> <![endif]-->
-<!--[if !IE]><!--> <html>             <!--<![endif]-->
-<html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SITREP - Search</title>
-
-
-<link rel="stylesheet" media="screen" href="//ga15.sitrep-vatcinc.com/assets/styles/main.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link rel="shortcut icon" type="image/png" href="//ga15.sitrep-vatcinc.com/assets/images/favicon.png">
-
-</head>
-
-  <body>
-
-<header id="top-menu">
-  <nav>
-    <span class="site-logo">
-      <a href="/">
-        <img style="width:300px" src="//ga15.sitrep-vatcinc.com/assets/images/logo.png" />
-      </a>
-    </span>
-    <div class="nav left">
-      <div class="items">
-        <span class="text">
-          <a href="/">
-            Home
-          </a>
-        </span>
-        <span class="text"><a href="/intellipedia"  target="_blank" >Intellipedia</a></span>
-        <span class="text searchtext"><form action="/services/search"><label class="searchbar-label"><small>Search: </small></label><input id="search-bar" type="text" name="q" placeholder="Search"/></form></span>
-      </div>
-    </div>
-    <!--<div class="nav right">
-      <div class="items">
-        <span class="icon"><a href="/"><i class="material-icons">add</i></a></span>
-        <span class="icon"><a href="/"><i class="material-icons">add</i></a></span>
-      </div>
-    </div>-->
-
-    </ul>
-  </nav>
-</header>
-
+{{ define "searchResult" }}
+{{template "header"}}
 <style>
 .search-bar{
   width:100%;
@@ -96,12 +45,12 @@ No match
   <div class="page-entry">
     {{ if .Image }}
       <div class="page-img">
-        <a href="//ga15.sitrep-vatcinc.com{{ .Link }}"><img style="height:100px;width:auto" src="//ga15.sitrep-vatcinc.com/assets/{{ .Image }}" width="245"/></a>
+        <a href="{{ .Link }}"><img style="height:100px;width:auto" src="/assets/{{ .Image }}" width="245"/></a>
       </div>
     {{ end }}
     <div class="page-contents">
-      <div class="page-title"><a href="//ga15.sitrep-vatcinc.com{{ .Link }}">{{ .Title }}</a></div>
-      <div class="page-preview"><a href="//ga15.sitrep-vatcinc.com{{ .Link }}">{{ .Preview }}<b>Read more...</b></a></div>
+      <div class="page-title"><a href="{{ .Link }}">{{ .Title }}</a></div>
+      <div class="page-preview"><a href="{{ .Link }}">{{ .Preview }}<b>Read more...</b></a></div>
     </div>
   </div>
 {{ end }}
@@ -117,12 +66,12 @@ No match
 <div class="page-entry">
   {{ if .Image }}
     <div class="page-img">
-      <a href="//ga15.sitrep-vatcinc.com{{ .Link }}"><img src="//ga15.sitrep-vatcinc.com/assets/{{ .Image }}" width="245"/></a>
+      <a href="{{ .Link }}"><img src="/assets/{{ .Image }}" width="245"/></a>
     </div>
   {{ end }}
   <div class="page-contents">
-    <div class="page-title"><a href="//ga15.sitrep-vatcinc.com{{ .Link }}">{{ .Title }}</a></div>
-    <div class="page-preview"><a href="//ga15.sitrep-vatcinc.com{{ .Link }}">{{ .Preview }}<b>Read more...</b></a></div>
+    <div class="page-title"><a href="{{ .Link }}">{{ .Title }}</a></div>
+    <div class="page-preview"><a href="{{ .Link }}">{{ .Preview }}<b>Read more...</b></a></div>
   </div>
 </div>
 {{ end }}
@@ -138,55 +87,16 @@ No match
 <div class="page-entry">
   {{ if .Image }}
     <div class="page-img">
-      <a href="//ga15.sitrep-vatcinc.com{{ .Link }}"><img src="//ga15.sitrep-vatcinc.com/assets/{{ .Image }}" width="245"/></a>
+      <a href="{{ .Link }}"><img src="/assets/{{ .Image }}" width="245"/></a>
     </div>
   {{ end }}
   <div class="page-contents">
-    <div class="page-title"><a href="//ga15.sitrep-vatcinc.com{{ .Link }}">{{ .Title }}</a></div>
-    <div class="page-preview"><a href="//ga15.sitrep-vatcinc.com{{ .Link }}">{{ .Preview }}<b>Read more...</b></a></div>
+    <div class="page-title"><a href="{{ .Link }}">{{ .Title }}</a></div>
+    <div class="page-preview"><a href="{{ .Link }}">{{ .Preview }}<b>Read more...</b></a></div>
   </div>
 </div>
 {{ end }}
 </div>
 </div>
-
-
-
-
-
-
-<div id="outer-footer" style="margin-top: 30px;">
-  <div id="footer">
-    <div class="line" style="padding:10px;">
-      <div class="left-icon" >
-        Providing Global Strategies for Secure Operations in a Rapidly Changing World™<hr />
-        For technical support or a full SITREP demo contact VATC exercise support.
-      </div>
-
-
-<form action="/contact" method="POST" >
-
-        <div class="middle-text"><small>Your Name*</small><br />
-          <input type="text" name="name" placeholder="Name" style="color: #393939!important"/><small>Your Email*</small><br />
-          <input type="text" name="email" placeholder="Email" style="color: #393939!important"/><small>A Subject*</small><br />
-          <input type="text" name="subject" placeholder="Subject" style="color: #393939!important"/>
-        </div>
-        <div class="middle-text"><small>Content*</small><br />
-          <textarea placeholder="Content" name="content" rows="4" style="color: #393939!important"></textarea>
-          <input type="submit" value="Send Contact Request"/>
-        </div>
-
-</form>
-
-      <div class="right-text">
-        <img src="//ga15.sitrep-vatcinc.com/assets/images/vatc-logo.png" style="max-height: 100%;max-width: 70%;margin: 10px 30px;"/>
-      </div>
-    </div>
-    <div class="line text-center" style="padding:10px;">
-      <a href="http://vatcinc.com" target="_blank" style="color: #fff;font-size:14px;">VISUAL AWARENESS TECHNOLOGIES AND CONSULTING, INC. © 2015 | ALL RIGHTS RESERVED</a>
-    </div>
-  </div>
-</div>
-
-  </body>
-</html>
+{{template "footer"}}
+{{ end }}
