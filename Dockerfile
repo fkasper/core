@@ -3,7 +3,6 @@ FROM golang:1.5-onbuild
 EXPOSE 8111
 RUN make install
 
-WORKDIR /root
-COPY templates /root
+#COPY templates .
 
-ENTRYPOINT ["/go/bin/core"]
+CMD ["/go/bin/core"]
