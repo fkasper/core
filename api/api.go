@@ -85,10 +85,6 @@ func (c *ProxyController) search(w http.ResponseWriter, r *http.Request) {
     return
 	}
 	queryString := r.URL.Query().Get("q")
-	if queryString == "" {
-		w.Write([]byte("Query parameter missing. NYI"))
-    return
-	}
 	limit := r.URL.Query().Get("limit")
 	if limit == "" {
 		limit = "30"
