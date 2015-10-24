@@ -80,16 +80,8 @@
        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
        success: function(data, textStatus, jqXHR)
        {
-           if(typeof data.error === 'undefined')
-           {
-             image = data.url;
-                alert("Your images was successfully uploaded. Please submit the form now.")
-           }
-           else
-           {
-               // Handle errors here
-               alert('ERRORS: ' + data.error);
-           }
+         disabled = false;
+         image = data.url;
        },
        error: function(jqXHR, textStatus, errorThrown)
        {
