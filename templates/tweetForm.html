@@ -37,6 +37,9 @@
       max-width: 600px;
       margin: 40px auto;
     }
+    .form-group{
+      padding: 10px;
+    }
   </style>
   <div class="alert alert-success" role="alert">Valid Token Specified. Type your tweet below</div>
 
@@ -45,10 +48,57 @@
       <label for="tweet">You are about to post a "new" tweet</label>
       <textarea class="form-control" name="content" id="tweet" placeholder="Type your Tweet" ></textarea>
     </div>
-    <button type="submit" class="tweet-sbmit btn btn-default">Tweet</button>
+    <div class="form-group">
+      <label for="tweet">Add An Image (optional)</label>
+      <input type="file" id="tweet-image" name="image" />
+    </div>
+    <button type="submit" class="tweet-sbmit btn btn-default">Tweet ( 140 / 140 left )</button>
   </form>
-  <script type="text/javascript" src="/assets/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="//ga15.sitrep-vatcinc.com/assets/lib/jquery/jquery.min.js"></script>
   <script type="text/javascript">
+  $('#tweet').on('keydown', function(e){
+    var length = 140 - $(e.target).val().length;
+    $(".tweet-sbmit").text("Tweet ( " + length + " / 140 left )");
+    //if(length <= 0){
+
+      //e.preventDefault();
+    //}
+  });
+  var disabled = false;
+  var image;
+  $('#tweet-image').on('change', function(e){
+    var data = new FormData();
+    data.append("files", e.target.files[0]);
+    disabled = true;
+    $.ajax({
+       url: '/api/v1/upload',
+       type: 'POST',
+       data: data,
+       cache: false,
+       dataType: 'json',
+       processData: false, // Don't process the files
+       contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+       success: function(data, textStatus, jqXHR)
+       {
+           if(typeof data.error === 'undefined')
+           {
+             image = data.url;
+                alert("Your images was successfully uploaded. Please submit the form now.")
+           }
+           else
+           {
+               // Handle errors here
+               alert('ERRORS: ' + data.error);
+           }
+       },
+       error: function(jqXHR, textStatus, errorThrown)
+       {
+           // Handle errors here
+           alert('ERRORS: ' + textStatus);
+           // STOP LOADING SPINNER
+       }
+   });
+  });
     $('.tweet-form').submit(function(e) {
       var content = $('#tweet').val();
       if(!content){
@@ -57,6 +107,11 @@
         return;
       }
       console.info("Tweet Content: " + content);
+      if(disabled){
+        alert("Your image is still uploading. Please wait.");
+        e.preventDefault();
+        return
+      }
       $.ajax({
         async: true,
         url: '/api/v1/tweets',
@@ -68,7 +123,8 @@
           userId: '3e8599cb-5083-4ac7-9d56-f249b4ae4b38',
           parsedTweetContent: content,
           retweets: 0,
-          favorites: 0
+          favorites: 0,
+          preview: image
         }),
         error: function() {
           alert("An error occured!. Please try again");
