@@ -8,9 +8,22 @@ import (
 	elastigo "github.com/fkasper/core/Godeps/_workspace/src/github.com/mattbaird/elastigo/lib"
 	"os"
 	"time"
+  "strings"
 	//"encoding/json"
 )
 
+type IntellipediaPage struct {
+  Url               string             `json:"url"`
+  Content           string             `json:"content"`
+  Image             string             `json:"image"`
+  PreviewContent    string             `json:"previewcontent"`
+  Title             string             `json:"title"`
+}
+type SocialSite struct {
+  Name            string            `json:"name"`
+  Link            string            `json:"link"`
+  Tile            string            `json:"tile"`
+}
 type NewsRecord struct {
 	Url            string             `json:"url"`
 	NewsId         gocql.UUID         `json:"news_id"`
@@ -19,6 +32,16 @@ type NewsRecord struct {
 	PostedAt       time.Time          `json:"posted_at"`
 	PreviewContent string             `json:"previewcontent"`
 	Title          string             `json:"title"`
+	Link           string             `json:"link"`
+}
+type Record struct {
+  Title string                      `json:"title"`
+  Preview string                    `json:"preview"`
+  Image string                      `json:"image"`
+  Link string                       `json:"link"`
+  Content        string             `json:"content"`
+	Media          map[string]*string `json:"media"`
+	PostedAt       time.Time          `json:"posted_at"`
 }
 
 func main() {
@@ -43,7 +66,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "elastichost, e",
-					Value: "127.0.0.1",
+					Value: "elasticsearch.dev.docker",
 					Usage: "Elasticsearch Host",
 				},
 			},
@@ -71,10 +94,56 @@ func main() {
 					&news.PostedAt,
 					&news.PreviewContent,
 					&news.Title) {
-					cl.Index("sites", "overview", news.Url, nil, news)
+          item := &Record{
+            Title: news.Title,
+            Preview: news.PreviewContent,
+            Image: *news.Media["preview"],
+            Link: "/news/flobama/"+news.Url,
+            Content: news.Content,
+            PostedAt: news.PostedAt,
+            Media: news.Media,
+          }
+					cl.Index("sites", "news", news.Url, nil, item)
 					fmt.Println("Indexed:", news.Url)
 				}
 				if err := iter.Close(); err != nil {
+					log.Errorf(err.Error())
+				}
+        page := IntellipediaPage{}
+        iter2 := session.Query(`SELECT url, content, image, mapimg, name FROM intellipediapagestable`).Iter()
+				for iter2.Scan(&page.Url,
+					&page.Content,
+					&page.Image,
+					&page.PreviewContent,
+					&page.Title) {
+          item := &Record{
+            Title: page.Title,
+            Preview: page.PreviewContent,
+            Image: page.Image,
+            Link: "/intellipedia/"+page.Url,
+            Content: page.Content,
+          }
+					cl.Index("sites", "intellipedia", page.Url, nil, item)
+					fmt.Println("Indexed:", page.Url)
+				}
+				if err := iter2.Close(); err != nil {
+					log.Errorf(err.Error())
+				}
+        site := SocialSite{}
+        iter3 := session.Query(`SELECT name, link, tile FROM categoriestable`).Iter()
+				for iter3.Scan(&site.Name,
+          &site.Link,
+          &site.Tile) {
+          item := &Record{
+            Title: site.Name,
+            Preview: "",
+            Image: site.Tile,
+            Link: site.Link,
+          }
+					cl.Index("sites", "sites", strings.Replace(site.Name, " ", "-", -1), nil, item)
+					fmt.Println("Indexed:", site.Name)
+				}
+				if err := iter3.Close(); err != nil {
 					log.Errorf(err.Error())
 				}
 			},

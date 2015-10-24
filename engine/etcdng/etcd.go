@@ -206,23 +206,63 @@ func (n *ng) IssueAuthenticationToken(hostname string, email string, password st
 	//}
 }
 
-func (n *ng) Search(token string, limit string, query string) (elastigo.Hits, error) {
+func (n *ng) SearchAll(limit string, query string) (*engine.SearchResult, error) {
+  intellipedia, err := n.Search("intellipedia", limit, query)
+  if err != nil {
+    return &engine.SearchResult{}, err
+  }
+
+  news, err := n.Search("news", limit, query)
+  if err != nil {
+    return &engine.SearchResult{}, err
+  }
+  sites, err := n.Search("sites", limit, query)
+  if err != nil {
+    return &engine.SearchResult{}, err
+  }
+
+  return &engine.SearchResult{
+    Intellipedia: intellipedia,
+    News: news,
+    Sites: sites,
+  }, nil
+}
+
+func (n *ng) Search(token string, limit string, query string) ([]*engine.Result, error) {
 	c := elastigo.NewConn()
 	c.SetHosts([]string{"elasticsearch.dev.docker"})
-	searchJson := `{
+    searchJson := `{
         "from" : 0, "size" : ` + limit + `,
-  	    "query" : {
+        "query" : {
           "multi_match" : {
             "query":    "` + query + `",
             "fields": [ "title^3", "name^3", "url^2", "content", "preview" ]
           }
-  	    }
-  	}`
-	out, err := c.Search("sites", token, nil, searchJson)
-	if err != nil {
-		return elastigo.Hits{}, err
-	}
-	return out.Hits, nil
+        }
+      }`
+    out, err := c.Search("sites", token, nil, searchJson)
+
+    if err != nil {
+      return []*engine.Result{}, err
+    }
+    items := []*engine.Result{}
+
+    for _, item := range out.Hits.Hits {
+      var dat map[string]interface{}
+      if err := json.Unmarshal(*item.Source, &dat); err != nil {
+         return []*engine.Result{}, err
+      }
+      res := &engine.Result{
+        Title: dat["title"],
+        Preview: dat["preview"],
+        Image: dat["image"],
+        Link: dat["link"],
+      }
+      items = append(items, res)
+    }
+
+
+  return items, nil
 }
 
 func (n *ng) JSONVal(val interface{}) ([]byte, error) {

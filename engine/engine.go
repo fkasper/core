@@ -4,7 +4,7 @@ import (
 	//"time"
 
 	"github.com/fkasper/core/Godeps/_workspace/src/github.com/mailgun/log"
-	elastigo "github.com/fkasper/core/Godeps/_workspace/src/github.com/mattbaird/elastigo/lib"
+//	elastigo "github.com/fkasper/core/Godeps/_workspace/src/github.com/mattbaird/elastigo/lib"
 )
 
 type NewEngineFn func() (Engine, error)
@@ -22,7 +22,8 @@ type Engine interface {
 	Subscribe(events chan interface{}, cancel chan bool) error
 
 	IssueAuthenticationToken(hostname string, email string, password string) (string, error)
-	Search(token string, limit string, query string) (elastigo.Hits, error)
+  SearchAll(limit string, query string) (*SearchResult, error)
+
 	// GetLogSeverity returns the current logging severity level
 	GetLogSeverity() log.Severity
 	// SetLogSeverity updates the logging severity level
@@ -30,6 +31,19 @@ type Engine interface {
 
 	// Close should close all underlying resources such as connections, files, etc.
 	Close()
+}
+
+type Result struct {
+  Title interface{}
+  Preview interface{}
+  Image interface{}
+  Link interface{}
+}
+
+type SearchResult struct {
+  Intellipedia  []*Result
+  News          []*Result
+  Sites         []*Result
 }
 
 type SiteSetting struct {

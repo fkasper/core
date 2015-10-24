@@ -19,7 +19,7 @@ sloccount:
 
 install: clean
 	go install github.com/fkasper/core
-	#cd xctl && $(MAKE) install && cd ..
+	cd xctl && $(MAKE) install && cd ..
 	#cd vbundle && $(MAKE) install && cd ..
 
 run: install
