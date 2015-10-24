@@ -63,13 +63,13 @@
         method: 'POST',
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
-        data: {
+        data: JSON.stringify({
           postedAt: (new Date()).getTime(),
           userId: '3e8599cb-5083-4ac7-9d56-f249b4ae4b38',
           parsedTweetContent: content,
           retweets: 0,
           favorites: 0
-        },
+        }),
         error: function() {
           alert("An error occured!. Please try again");
         },
