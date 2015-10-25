@@ -187,24 +187,58 @@ func (n *ng) IssueAuthenticationToken(hostname string, email string, password st
 	if err := bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(password)); err != nil {
 		return "", fmt.Errorf("Invalid Password")
 	}
+  //method := jwt.GetSigningMethod("HS512")
 
-	token := jwt.New(jwt.SigningMethodHS256)
-
+  token := jwt.New(jwt.SigningMethodHS512)
 	token.Claims["sub"] = user.Id
 	token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+  randKey := RandStringBytesMaskImprSrc(40)
+  tkn, err := token.SignedString(randKey)
+  if err != nil {
+    return "", err
+  }
 
-	return token.SignedString(RandStringBytesMaskImprSrc(40))
-	//1. verify domain (active)
-	//2. verify customer (active)
-	//3. verify user (active -> password)
-	//4. issue token and log to database
-	//n.GetFullUserForUsername(username)
-	//n.GetCustomerForDomain(hostname)
-	//if err := session.Query(`SELECT site,`); err != nil {
-	//  log.Errorf("===> Got a database error while querying for site_settings")
-	//  return "", err
-	//}
+  if err := session.Query(`INSERT INTO tokens (jwt, key) VALUES (?, ?)`,
+      tkn, randKey).Exec(); err != nil {
+    return "", err
+  }
+	return tkn, nil
 }
+
+func (n *ng) GetJwtToken(token string) ([]byte, error) {
+  //log.Debugf(validTime)
+  var key string
+  session, _ := n.Database.CreateSession()
+	defer session.Close()
+	if err := session.Query(`SELECT key
+    FROM tokens
+    WHERE jwt = ?
+    LIMIT 1`,
+		token).Consistency(gocql.One).Scan(&key); err != nil {
+		log.Errorf("===> Got a database error while querying for a specific key")
+		return []byte(""), err
+	}
+	return []byte(key), nil
+}
+
+
+func (n *ng) ValidateTokenRequest(myToken string) error {
+  //req := &SharedTweetToken{}
+  token, err := jwt.Parse(myToken, func(token *jwt.Token) (interface{}, error) {
+    // if _, ok := token.Method.(jwt.GetSigningMethod("HS256")); !ok {
+    //     return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+    // }
+    key, err := n.GetJwtToken(token.Raw)
+    return key, err
+  })
+
+  if err == nil && token.Valid {
+    return nil
+  } else {
+    return err
+  }
+}
+
 
 func (n *ng) SearchAll(limit string, query string) (*engine.SearchResult, error) {
   intellipedia, err := n.Search("intellipedia", limit, query)
@@ -660,6 +694,13 @@ type cassandraPool struct {
 	Keyspace string
 	NumConns int
 	Nodes    []string
+}
+
+type SharedTweetToken struct {
+  Id          gocql.UUID
+  Active      bool
+  AvatarId    gocql.UUID
+  AddedAt     time.Time
 }
 
 type MinimalUserRecord struct {

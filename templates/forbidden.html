@@ -1,9 +1,16 @@
 
 {{ define "forbidden" }}
   {{template "header"}}
+  <style>
+    .alert-error{
+      text-align: center;
+      background: crimson;
+      font-size: 20px;
+      padding: 5px;
+    }
+  </style>
 
-
-  {{.}}
+  <div class="alert alert-error" role="alert">{{ . }}</div>
   {{template "footer"}}
 
 {{ end }}

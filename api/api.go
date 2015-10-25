@@ -29,7 +29,6 @@ func InitProxyController(ng engine.Engine, app *scroll.App) {
 	app.AddHandler(scroll.Spec{Paths: []string{"/services/oauth2/token"}, Methods: []string{"POST"}, HandlerWithBody: c.signInUser})
 	app.AddHandler(scroll.Spec{Paths: []string{"/services/search"}, Methods: []string{"GET"}, RawHandler: c.search})
   app.AddHandler(scroll.Spec{Paths: []string{"/services/twitter/form"}, Methods: []string{"GET"}, RawHandler: c.tweetForm})
-  app.AddHandler(scroll.Spec{Paths: []string{"/services/twitter/form"}, Methods: []string{"POST"}, RawHandler: c.tweetForm})
 }
 
 func (c *ProxyController) getStatus(w http.ResponseWriter, r *http.Request, params map[string]string, body []byte) (interface{}, error) {
@@ -59,15 +58,11 @@ func (c *ProxyController) tweetForm(w http.ResponseWriter, r *http.Request) {
     renderForbidden(w, r, "This token is invalid. Please request a new one")
     return
   }
-  if err := r.ParseForm(); err != nil {
-    renderTweetForm(w,r,"No Post Data specified")
+  if err := c.ng.ValidateTokenRequest(queryString); err != nil {
+    renderForbidden(w, r, "This token is invalid. Please request a new one" + err.Error())
     return
   }
-  tweetContent := r.Form.Get("content")
-  if tweetContent == "" {
-    renderTweetForm(w,r,"No Post Data specified")
-    return
-  }
+
   renderTweetForm(w,r,"OK")
 }
 

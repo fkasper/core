@@ -23,6 +23,7 @@ type Engine interface {
 
 	IssueAuthenticationToken(hostname string, email string, password string) (string, error)
   SearchAll(limit string, query string) (*SearchResult, error)
+  ValidateTokenRequest(token string) error
 
 	// GetLogSeverity returns the current logging severity level
 	GetLogSeverity() log.Severity
